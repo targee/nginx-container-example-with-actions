@@ -1,0 +1,25 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Build and push Docker image
+      run: |
+        username=${{ secrets.USERNAME }}
+        password=${{ secrets.PASSWORD }}
+        image=${{ secrets.IMAGE }}
+        tag=$(date +%Y%m%d%H%M)
+        echo $password | docker login -u $username --password-stdin
+        docker build . -t $image:$tag
+        docker push $image:$tag
